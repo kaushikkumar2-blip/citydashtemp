@@ -1,0 +1,64 @@
+# =============================================================================
+# Seller x City Dashboard — FDP / QAAS Scraper Configuration
+# =============================================================================
+
+site:
+  base_url: "http://fdp.fkinternal.com"
+  query_url: "http://fdp.fkinternal.com/query"
+
+# ---------------------------------------------------------------------------
+# Login — only needed if session has expired
+# ---------------------------------------------------------------------------
+login:
+  username_selector: "input[placeholder='User Name'], input[name='username']"
+  password_selector: "input[placeholder='Password'], input[name='password'], input[type='password']"
+  idp_dropdown_selector: "select"
+  idp_value: "Flipkart LDAP"
+  submit_selector: "button:has-text('Submit'), input[value='Submit']"
+  post_login_timeout_ms: 180000
+
+# ---------------------------------------------------------------------------
+# API endpoints (discovered from browser Network tab)
+# ---------------------------------------------------------------------------
+api:
+  base_url: "http://fdp.fkinternal.com/p/fdp/lens/lensapi/queryapi"
+  source_name: "BIGQUERY"
+  team_name: "core-logistics-t"
+  queue_name: "fulfillment_adhoc"
+  workload_type: "Default"
+  execution_mode: "Regular"
+  max_wait_seconds: 1800
+  poll_interval_seconds: 15
+
+# ---------------------------------------------------------------------------
+# Output — this filename MUST match the one loaded by dashboard.py
+# ---------------------------------------------------------------------------
+output:
+  folder: "data"
+  rename_pattern: "362c62a8adb9d17ecb5a6c9d33385822"
+  format: "csv"
+
+# ---------------------------------------------------------------------------
+# Browser — used ONLY for cookie extraction (opens briefly, then closes)
+# ---------------------------------------------------------------------------
+browser:
+  profile_dir: ".chrome_profile"
+  headless: false
+  timeout_ms: 60000
+
+# ---------------------------------------------------------------------------
+# GitHub push
+# ---------------------------------------------------------------------------
+github:
+  enabled: true
+  repo_path: "."
+  commit_message: "chore: update city dashboard data {date}"
+  branch: "main"
+  remote: "origin"
+
+# ---------------------------------------------------------------------------
+# Schedule (reference only — actual scheduling via Windows Task Scheduler)
+# ---------------------------------------------------------------------------
+schedule:
+  time: "08:00"
+  timezone: "Asia/Kolkata"

@@ -108,7 +108,11 @@ def load_data(path: str) -> pd.DataFrame:
     for col in NUMERIC_COLS:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0).astype("float32")
-    df["reporting_date"] = df["reporting_date"].astype(str)
+    df["reporting_date"] = df["reporting_date"].astype(str).str.strip()
+    # Drop rows where reporting_date is not a valid YYYYMMDD string
+    # (e.g. stray "END OF FILE" footer rows from query exports).
+    valid_date = df["reporting_date"].str.fullmatch(r"\d{8}", na=False)
+    df = df[valid_date].copy()
     df["destination_city"] = df["destination_city"].astype("category")
     df["seller_type"] = df["seller_type"].astype("category")
     pt = df["payment_type"].str.strip().str.upper()
